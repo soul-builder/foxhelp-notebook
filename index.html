@@ -106,7 +106,16 @@
     font-size: 22px;
   }
 }
+/* Mobile tap-friendly tweaks */
+.note-item { padding: 12px; gap: 8px; align-items: center; }
+.note-item .btn { min-width: 58px; padding: 8px 10px; touch-action: manipulation; -webkit-tap-highlight-color: rgba(0,0,0,0.05); }
+.note-item button { display:inline-flex; align-items:center; justify-content:center; }
 
+/* Ensure sidebar receives touches above main area */
+.sidebar { z-index: 9999; }
+
+/* If using overlay/transform, avoid a transparent overlay blocking touches */
+.container::after { pointer-events: none; }
   </style>
   <!-- jsPDF and JSZip for PDF + ZIP export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -256,28 +265,65 @@
     function uid(){ return 'n_' + Math.random().toString(36).slice(2,9); }
     function safeFileName(s){ return (s || 'note').replace(/[^a-z0-9\-\_ ]/gi,'').slice(0,120) || 'note'; }
 
-    // Rendering
-    function renderNotes(filter=''){
-      noteList.innerHTML = '';
-      const q = (filter||'').toLowerCase();
-      const list = notes.filter(n => !q || (n.title + ' ' + (n.content||'')).toLowerCase().includes(q));
-      if(list.length === 0){
-        const empty = document.createElement('div'); empty.textContent = 'No notes yet'; empty.style.color='#666'; empty.style.textAlign='center'; noteList.appendChild(empty); return;
-      }
-      list.forEach(n => {
-        const item = document.createElement('div'); item.className='note-item';
-        const left = document.createElement('div'); left.style.flex='1';
-        const t = document.createElement('div'); t.textContent = n.title || 'Untitled'; t.style.fontWeight='600';
-        const m = document.createElement('div'); m.className='meta'; m.textContent = (n.content||'').slice(0,80);
-        left.appendChild(t); left.appendChild(m);
-        const right = document.createElement('div');
-        const openBtn = document.createElement('button'); openBtn.className='btn small'; openBtn.textContent='Open'; openBtn.addEventListener('click',(e)=>{ e.stopPropagation(); loadNote(n.id); sidebar.classList.add('hidden'); });
-        const delBtn = document.createElement('button'); delBtn.className='btn small'; delBtn.textContent='Delete'; delBtn.addEventListener('click',(e)=>{ e.stopPropagation(); notes = notes.filter(x=>x.id!==n.id); saveToLocal(); renderNotes(search.value); });
-        right.appendChild(openBtn); right.appendChild(delBtn);
-        item.appendChild(left); item.appendChild(right);
-        noteList.appendChild(item);
-      });
-    }
+   // inside renderNotes() loop, replace creation of openBtn/delBtn with this:
+list.forEach(n => {
+  const item = document.createElement('div');
+  item.className = 'note-item';
+  const left = document.createElement('div');
+  left.style.flex = '1';
+  const t = document.createElement('div');
+  t.textContent = n.title || 'Untitled';
+  t.style.fontWeight = '600';
+  const m = document.createElement('div');
+  m.className = 'meta';
+  m.textContent = (n.content||'').slice(0,80);
+  left.appendChild(t);
+  left.appendChild(m);
+
+  // right side small actions
+  const right = document.createElement('div');
+  right.style.display = 'flex';
+  right.style.gap = '6px';
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'btn small';
+  delBtn.textContent = 'Delete';
+  delBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if(!confirm('Delete note?')) return;
+    notes = notes.filter(x => x.id !== n.id);
+    saveToLocal();
+    renderNotes(search.value);
+    status('Deleted');
+  });
+
+  right.appendChild(delBtn);
+
+  // Make the whole item clickable/tappable
+  // Use a guard to avoid double firing (touch + click)
+  let touched = false;
+  function activateNote(e){
+    e && e.stopPropagation();
+    if(touched && e && e.type === 'click') return; // already handled by touchstart
+    loadNote(n.id);
+    sidebar.classList.add('hidden');
+  }
+  // touchstart is fired earlier on mobile; set flag
+  item.addEventListener('touchstart', (e) => {
+    touched = true;
+    activateNote(e);
+    // clear flag after short delay so future taps still work
+    setTimeout(() => { touched = false; }, 700);
+  }, {passive:true});
+
+  // fallback for click (desktop)
+  item.addEventListener('click', activateNote);
+
+  item.appendChild(left);
+  item.appendChild(right);
+  noteList.appendChild(item);
+});
+
 
     // New / Save / Load
     function newNoteHandler(){
@@ -427,5 +473,6 @@
   </script>
 </body>
 </html>
+
 
 
