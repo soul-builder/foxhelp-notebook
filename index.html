@@ -6,133 +6,109 @@
   gtag('js', new Date());
 
   gtag('config', 'G-CLNDNJRX2D');
-</script>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>FoxHelp Solutions - Notebook</title>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:Inter, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;background:#f5f5f5;color:#222;display:flex;flex-direction:column;min-height:100vh}
-    body.dark{background:#0b1220;color:#e6eef8}
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FoxHelp Notebook</title>
 
-    .header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:linear-gradient(135deg,#FFA500,#008000);color:#fff;box-shadow:0 2px 10px rgba(0,0,0,0.12)}
-    .company-name{font-size:18px;font-weight:700}
-    .controls{display:flex;align-items:center;gap:8px}
-    .btn{background:#fff;color:#008000;border:none;padding:8px 10px;border-radius:8px;cursor:pointer;font-weight:600;transition:all .15s}
+  <style>
+    /* Reset */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family:Inter, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background:#f5f5f5;color:#222;display:flex;flex-direction:column;min-height:100vh;
+    }
+
+    :root{
+      --accent-1:#FFA500;
+      --accent-2:#008000;
+      --panel:#fff;
+      --muted:#666;
+      --status-bg:rgba(255,255,255,0.18);
+    }
+    body.dark{
+      --panel:#07101a;
+      background:#0b1220;color:#e6eef8;
+    }
+
+    /* Header */
+    .header{
+      display:flex;align-items:center;justify-content:space-between;padding:12px 16px;
+      background:linear-gradient(135deg,var(--accent-1),var(--accent-2));color:#fff;
+      gap:12px;box-shadow:0 2px 10px rgba(0,0,0,0.08);
+    }
+    .left-row{display:flex;align-items:center;gap:10px}
+    .company-name{font-weight:700;font-size:18px}
+    .controls{display:flex;gap:8px;align-items:center}
+    .save-status{font-size:13px;padding:6px 10px;border-radius:18px;background:var(--status-bg);color:#fff}
+
+    /* Buttons */
+    .btn{background:#fff;border:none;padding:8px 10px;border-radius:8px;cursor:pointer;font-weight:600}
     .btn.small{padding:6px 8px;font-size:13px}
     .btn:hover{transform:translateY(-2px)}
-    .icon-btn{background:transparent;border:none;color:#fff;font-size:18px;cursor:pointer;margin-right:6px}
-    .toolbar{display:flex;gap:6px;align-items:center}
-    .select, .input-file{padding:6px;border-radius:6px;border:1px solid rgba(0,0,0,0.08)}
+    .icon-btn{background:transparent;border:none;color:#fff;font-size:20px;cursor:pointer;margin-right:6px}
+    .toolbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+    .select, input[type="text"]{padding:6px;border-radius:6px;border:1px solid rgba(0,0,0,0.08)}
 
+    /* Layout */
     .container{flex:1;display:flex;position:relative;overflow:hidden}
-    .sidebar{width:320px;background:#fff;border-right:1px solid #e6e6e6;display:flex;flex-direction:column;transition:transform .25s ease}
+    .sidebar{width:320px;background:var(--panel);border-right:1px solid #e6e6e6;display:flex;flex-direction:column;transition:transform .25s ease;z-index:999}
     .sidebar.hidden{transform:translateX(-100%)}
-    .sidebar .header-row{display:flex;align-items:center;justify-content:space-between;padding:12px;background:#FFA500;color:#fff}
+    .sidebar .header-row{display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--accent-1);color:#fff}
     .note-list{flex:1;overflow:auto;padding:8px;display:flex;flex-direction:column;gap:8px}
-    .note-item{padding:10px;border:1px solid #eee;border-radius:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+    .note-item{padding:10px;border:1px solid #eee;border-radius:8px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;background:transparent}
     .note-item:hover{background:#fafafa}
-    .note-item .meta{font-size:12px;color:#666}
+    .note-item .meta{font-size:12px;color:var(--muted);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
     .main{flex:1;display:flex;flex-direction:column;padding:14px;position:relative;min-width:0}
     .note-header{display:flex;gap:8px;align-items:center;margin-bottom:8px}
     .note-title{flex:1;padding:10px;border:1px solid #ccc;border-radius:6px;font-size:16px}
-    .notepad{flex:1;padding:12px;border:2px solid #FFA500;border-radius:10px;font-size:15px;resize:vertical;min-height:200px;white-space:pre-wrap}
+    .notepad{flex:1;padding:12px;border:2px solid var(--accent-1);border-radius:10px;font-size:15px;resize:vertical;min-height:200px;white-space:pre-wrap;background:var(--panel);color:inherit}
+    .status-row{margin-top:8px;display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+    .find-replace{position:fixed;right:18px;top:70px;background:var(--panel);border:1px solid #ddd;padding:10px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.12);display:none;z-index:2000}
 
-    .status-row{margin-top:8px;display:flex;justify-content:space-between;font-size:12px;color:#666}
+    /* small helpers */
+    .muted{color:var(--muted)}
+    .footer{background:#222;color:#fff;padding:10px;text-align:center;font-size:13px}
 
-    .find-replace{position:fixed;right:18px;top:70px;background:#fff;border:1px solid #ddd;padding:10px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.12);display:none}
+    /* Mobile responsive */
+    @media only screen and (max-width: 920px){
+      .header{flex-direction:row;align-items:center}
+      .sidebar{position:absolute;z-index:999;height:100%}
+    }
+    @media only screen and (max-width: 600px) {
+      .header{flex-direction:column;align-items:flex-start;padding:10px}
+      .company-name{font-size:18px;margin-bottom:6px}
+      .toolbar{gap:6px}
+      .note-title{font-size:15px;padding:8px}
+      .notepad{font-size:14px;padding:12px}
+      .note-item{padding:12px}
+      .note-item .meta{max-width:160px}
+      .sidebar{width:100%}
+      .icon-btn{font-size:22px}
+    }
 
-    body.dark .sidebar, body.dark .notepad, body.dark .note-item, body.dark .note-title { background: #0b1220; color: #e6eef8; border-color: rgba(255,255,255,0.06); }
-    body.dark .note-item:hover { background: rgba(255,255,255,0.03); }
-    body.dark .btn { background: #122226; color: #e6eef8; }
-
-    @media (max-width:920px){.sidebar{position:absolute;z-index:30;height:100%}.sidebar.hidden{transform:translateX(-100%)}}
-    /* ---------- Responsive Design (Mobile Friendly) ---------- */
-@media only screen and (max-width: 600px) {
-  body {
-    background-color: #f5f5f5;
-  }
-
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 8px 12px;
-  }
-
-  .company-name {
-    font-size: 20px;
-    margin-bottom: 8px;
-  }
-
-  .controls .toolbar {
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-
-  .notepad-container {
-    padding: 10px;
-  }
-
-  .notepad {
-    font-size: 14px;
-    line-height: 1.4;
-    padding: 12px;
-    border-width: 2px;
-  }
-
-  .footer {
-    font-size: 10px;
-    padding: 8px;
-  }
-
-  /* Sidebar fix for small screens */
-  .sidebar {
-    position: absolute;
-    z-index: 20;
-    height: 100%;
-    width: 100%;
-    transform: translateX(-100%);
-  }
-
-  .sidebar.visible {
-    transform: translateX(0);
-  }
-
-  .icon-btn {
-    font-size: 22px;
-  }
-}
-/* Mobile tap-friendly tweaks */
-.note-item { padding: 12px; gap: 8px; align-items: center; }
-.note-item .btn { min-width: 58px; padding: 8px 10px; touch-action: manipulation; -webkit-tap-highlight-color: rgba(0,0,0,0.05); }
-.note-item button { display:inline-flex; align-items:center; justify-content:center; }
-
-/* Ensure sidebar receives touches above main area */
-.sidebar { z-index: 9999; }
-
-/* If using overlay/transform, avoid a transparent overlay blocking touches */
-.container::after { pointer-events: none; }
+    /* Tap-friendly */
+    .note-item .btn{min-width:58px;padding:8px 10px;touch-action:manipulation;-webkit-tap-highlight-color:rgba(0,0,0,0.05)}
+    .container::after{pointer-events:none}
+    .sidebar, .main { -webkit-transform: translateZ(0); }
   </style>
-  <!-- jsPDF and JSZip for PDF + ZIP export -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 </head>
 <body>
-  <div class="header">
-    <div style="display:flex;align-items:center;gap:8px">
-      <button class="icon-btn" id="toggleSidebar">☰</button>
+  <div class="header" role="banner">
+    <div class="left-row">
+      <button class="icon-btn" id="toggleSidebar" aria-label="Toggle sidebar">☰</button>
       <div class="company-name">FoxHelp Notebook</div>
     </div>
 
     <div class="controls">
       <div class="toolbar" role="toolbar" aria-label="Editor toolbar">
         <button class="btn small" id="newNote">New</button>
-        <button class="btn small" id="openFileBtn" title="Open file">Open</button>
-        <input type="file" id="openFile" accept=".txt,.md" class="input-file" style="display:none">
+        <label class="btn small" for="openFile" id="openFileBtn">Open</label>
+        <input type="file" id="openFile" accept=".txt,.md" style="display:none">
 
         <button class="btn small" id="saveNote">Save</button>
         <button class="btn small" id="exportPdf">Export PDF</button>
@@ -141,13 +117,13 @@
         <button class="btn small" id="redoBtn">Redo</button>
         <button class="btn small" id="clearNote">Clear</button>
 
-        <select id="fontFamily" class="select">
+        <select id="fontFamily" class="select" title="Font family">
           <option value="ui-monospace, SFMono-Regular, Menlo, Monaco, 'Courier New', monospace">Monospace</option>
           <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Sans</option>
           <option value="Georgia, 'Times New Roman', Times, serif">Serif</option>
         </select>
 
-        <select id="fontSize" class="select">
+        <select id="fontSize" class="select" title="Font size">
           <option value="13">13px</option>
           <option value="15" selected>15px</option>
           <option value="17">17px</option>
@@ -163,28 +139,30 @@
 
         <button class="btn small" id="darkToggle">Dark</button>
       </div>
+
+      <div style="display:flex;gap:8px;align-items:center;margin-left:8px">
+        <div class="save-status" id="saveStatus" aria-live="polite">Ready</div>
+      </div>
     </div>
   </div>
 
   <div class="container">
-    <aside class="sidebar hidden" id="sidebar">
+    <aside class="sidebar hidden" id="sidebar" aria-hidden="true">
       <div class="header-row">
         <div>📘 Saved Notes</div>
-        <!-- Export-all button next to title (three-line area) -->
-        <div>
-          <button class="btn small" id="exportAllBtn">Export All (ZIP)</button>
-        </div>
+        <div><button class="btn small" id="exportAllBtn">Export All (ZIP)</button></div>
       </div>
 
       <div style="padding:8px;display:flex;gap:6px">
         <input id="search" placeholder="Search..." style="flex:1;padding:6px;border-radius:6px;border:1px solid #ddd">
       </div>
-      <div class="note-list" id="noteList"></div>
+
+      <div class="note-list" id="noteList" role="list"></div>
     </aside>
 
-    <main class="main">
+    <main class="main" id="main">
       <div class="note-header">
-        <input type="text" id="noteTitle" class="note-title" placeholder="Note title..." />
+        <input type="text" id="noteTitle" class="note-title" placeholder="Note title...">
         <div style="display:flex;gap:6px">
           <button class="btn small" id="deleteNote">Delete</button>
         </div>
@@ -199,7 +177,7 @@
     </main>
   </div>
 
-  <div class="find-replace" id="findReplacePanel">
+  <div class="find-replace" id="findReplacePanel" aria-hidden="true">
     <div style="display:flex;gap:6px;margin-bottom:8px">
       <input id="findInput" placeholder="Find" style="padding:6px;border:1px solid #ddd;border-radius:6px">
       <input id="replaceInput" placeholder="Replace" style="padding:6px;border:1px solid #ddd;border-radius:6px">
@@ -212,11 +190,13 @@
     </div>
   </div>
 
-  <script>
-    // Libraries
-    const { jsPDF } = window.jspdf || {};
-    const JSZip = window.JSZip;
+  <div class="footer">© 2024 FoxHelp Solutions - Your notes are saved locally</div>
 
+  <!-- jsPDF and JSZip from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+
+  <script>
     // Elements
     const sidebar = document.getElementById('sidebar');
     const toggleSidebar = document.getElementById('toggleSidebar');
@@ -229,9 +209,9 @@
     const statusEl = document.getElementById('status');
     const charCount = document.getElementById('charCount');
     const search = document.getElementById('search');
+    const exportAllBtn = document.getElementById('exportAllBtn');
     const openFileBtn = document.getElementById('openFileBtn');
     const openFile = document.getElementById('openFile');
-    const exportAllBtn = document.getElementById('exportAllBtn');
 
     const undoBtn = document.getElementById('undoBtn');
     const redoBtn = document.getElementById('redoBtn');
@@ -254,104 +234,121 @@
     const printBtn = document.getElementById('printBtn');
     const darkToggle = document.getElementById('darkToggle');
     const exportPdfBtn = document.getElementById('exportPdf');
+    const saveStatus = document.getElementById('saveStatus');
+
+    // Storage keys
+    const STORAGE_KEY = 'foxhelp_notes_v1';
+    const SETTINGS_KEY = 'foxhelp_notebook_settings_v1';
 
     // Data
-    let notes = JSON.parse(localStorage.getItem('foxhelp_notes') || '[]');
+    let notes = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
     let currentId = null;
     let lastFindIndex = -1;
 
     // Utils
-    function saveToLocal(){ localStorage.setItem('foxhelp_notes', JSON.stringify(notes)); }
     function uid(){ return 'n_' + Math.random().toString(36).slice(2,9); }
+    function saveToLocal(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(notes)); }
     function safeFileName(s){ return (s || 'note').replace(/[^a-z0-9\-\_ ]/gi,'').slice(0,120) || 'note'; }
+    function status(txt){ statusEl.textContent = txt; saveStatus.textContent = txt; saveStatus.style.backgroundColor = 'rgba(0,128,0,0.9)'; setTimeout(()=>{ statusEl.textContent = 'Ready'; saveStatus.textContent = 'Ready'; saveStatus.style.backgroundColor = ''; },1400); }
 
-   // inside renderNotes() loop, replace creation of openBtn/delBtn with this:
-list.forEach(n => {
-  const item = document.createElement('div');
-  item.className = 'note-item';
-  const left = document.createElement('div');
-  left.style.flex = '1';
-  const t = document.createElement('div');
-  t.textContent = n.title || 'Untitled';
-  t.style.fontWeight = '600';
-  const m = document.createElement('div');
-  m.className = 'meta';
-  m.textContent = (n.content||'').slice(0,80);
-  left.appendChild(t);
-  left.appendChild(m);
+    // Render notes list (mobile touch-friendly)
+    function renderNotes(filter=''){
+      noteList.innerHTML = '';
+      const q = (filter||'').toLowerCase();
+      const list = notes.filter(n => !q || (n.title + ' ' + (n.content||'')).toLowerCase().includes(q));
+      if(list.length === 0){
+        const empty = document.createElement('div'); empty.textContent = 'No notes yet'; empty.style.color='#666'; empty.style.textAlign='center'; noteList.appendChild(empty); return;
+      }
+      list.forEach(n => {
+        const item = document.createElement('div'); item.className='note-item'; item.setAttribute('role','listitem');
+        const left = document.createElement('div'); left.style.flex='1';
+        const t = document.createElement('div'); t.textContent = n.title || 'Untitled'; t.style.fontWeight='600';
+        const m = document.createElement('div'); m.className='meta'; m.textContent = (n.content||'').slice(0,120);
+        left.appendChild(t); left.appendChild(m);
 
-  // right side small actions
-  const right = document.createElement('div');
-  right.style.display = 'flex';
-  right.style.gap = '6px';
+        const right = document.createElement('div'); right.style.display='flex'; right.style.gap='6px';
 
-  const delBtn = document.createElement('button');
-  delBtn.className = 'btn small';
-  delBtn.textContent = 'Delete';
-  delBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if(!confirm('Delete note?')) return;
-    notes = notes.filter(x => x.id !== n.id);
-    saveToLocal();
-    renderNotes(search.value);
-    status('Deleted');
-  });
+        // Delete button
+        const delBtn = document.createElement('button'); delBtn.className='btn small'; delBtn.textContent='Delete';
+        delBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if(!confirm('Delete note?')) return;
+          notes = notes.filter(x => x.id !== n.id);
+          saveToLocal();
+          renderNotes(search.value);
+          status('Deleted');
+        });
+        right.appendChild(delBtn);
 
-  right.appendChild(delBtn);
+        // Make whole item tappable (touchstart + click fallback)
+        let touched = false;
+        function activateNote(e){
+          e && e.stopPropagation();
+          if(touched && e && e.type === 'click') return; // already handled
+          loadNote(n.id);
+          sidebar.classList.add('hidden');
+          sidebar.setAttribute('aria-hidden','true');
+        }
+        item.addEventListener('touchstart', (e) => {
+          touched = true;
+          activateNote(e);
+          setTimeout(()=> { touched = false; }, 700);
+        }, {passive:true});
+        item.addEventListener('click', activateNote);
 
-  // Make the whole item clickable/tappable
-  // Use a guard to avoid double firing (touch + click)
-  let touched = false;
-  function activateNote(e){
-    e && e.stopPropagation();
-    if(touched && e && e.type === 'click') return; // already handled by touchstart
-    loadNote(n.id);
-    sidebar.classList.add('hidden');
-  }
-  // touchstart is fired earlier on mobile; set flag
-  item.addEventListener('touchstart', (e) => {
-    touched = true;
-    activateNote(e);
-    // clear flag after short delay so future taps still work
-    setTimeout(() => { touched = false; }, 700);
-  }, {passive:true});
-
-  // fallback for click (desktop)
-  item.addEventListener('click', activateNote);
-
-  item.appendChild(left);
-  item.appendChild(right);
-  noteList.appendChild(item);
-});
-
+        item.appendChild(left); item.appendChild(right);
+        noteList.appendChild(item);
+      });
+    }
 
     // New / Save / Load
     function newNoteHandler(){
       currentId = null; noteTitle.value = ''; notepad.value = ''; status('New note'); updateCount();
     }
     function saveNoteHandler(){
-      const t = noteTitle.value.trim() || 'Untitled'; const c = notepad.value;
-      if(currentId){ const idx = notes.findIndex(n=>n.id===currentId); if(idx!==-1){ notes[idx].title=t; notes[idx].content=c; notes[idx].updated = new Date().toISOString(); } else { notes.unshift({id:currentId||uid(), title:t, content:c, updated:new Date().toISOString()}); } }
-      else { const id = uid(); notes.unshift({id, title:t, content:c, updated:new Date().toISOString()}); currentId = id; }
+      const t = noteTitle.value.trim() || 'Untitled';
+      const c = notepad.value;
+      if(currentId){
+        const idx = notes.findIndex(n=>n.id===currentId);
+        if(idx!==-1){
+          notes[idx].title = t; notes[idx].content = c; notes[idx].updated = new Date().toISOString();
+        } else {
+          notes.unshift({id:currentId||uid(), title:t, content:c, updated:new Date().toISOString()});
+        }
+      } else {
+        const id = uid(); notes.unshift({id, title:t, content:c, updated:new Date().toISOString()}); currentId = id;
+      }
       saveToLocal(); renderNotes(search.value); status('Saved'); updateCount();
     }
-    function loadNote(id){ const n = notes.find(x=>x.id===id); if(!n) return; currentId = n.id; noteTitle.value = n.title; notepad.value = n.content; status('Loaded'); updateCount(); }
+    function loadNote(id){
+      const n = notes.find(x=>x.id===id);
+      if(!n) return;
+      currentId = n.id;
+      noteTitle.value = n.title;
+      notepad.value = n.content;
+      status('Loaded');
+      updateCount();
+    }
 
     // Open file
-    openFileBtn.addEventListener('click', ()=> openFile.click());
-    openFile.addEventListener('change', async (e)=>{
-      const f = e.target.files[0]; if(!f) return; const txt = await f.text(); noteTitle.value = f.name.replace(/\.[^.]+$/, ''); notepad.value = txt; currentId = null; status('File opened'); updateCount(); openFile.value='';
+    openFile.addEventListener('change', async (e) => {
+      const f = e.target.files[0]; if(!f) return;
+      const txt = await f.text();
+      noteTitle.value = f.name.replace(/\.[^.]+$/, '');
+      notepad.value = txt; currentId = null; status('File opened'); updateCount();
+      openFile.value = '';
     });
+    openFileBtn.addEventListener('click', ()=> openFile.click());
 
     // Export all as ZIP of PDFs
-    exportAllBtn.addEventListener('click', async ()=>{
-      if(!jsPDF || !JSZip){ alert('Libraries not loaded; please check your internet connection.'); return; }
+    exportAllBtn.addEventListener('click', async () => {
+      if(!window.jspdf || !window.JSZip){ alert('Libraries missing. Please ensure internet connection.'); return; }
       if(notes.length === 0){ alert('No notes to export'); return; }
       status('Preparing ZIP...');
       const zip = new JSZip();
       for(let i=0;i<notes.length;i++){
         const n = notes[i];
-        const doc = new jsPDF({unit:'pt', format:'a4'});
+        const doc = new jspdf.jsPDF({unit:'pt', format:'a4'});
         const margin = 40;
         const pageWidth = doc.internal.pageSize.getWidth();
         const pageHeight = doc.internal.pageSize.getHeight();
@@ -366,7 +363,12 @@ list.forEach(n => {
         const maxY = pageHeight - margin - 20;
         let pageNum = 1;
         for(let li=0; li<lines.length; li++){
-          if(cursorY + 14 > maxY){ doc.setFontSize(10); doc.text(`Page ${pageNum}`, pageWidth - margin - 50, pageHeight - margin + 10); doc.addPage(); pageNum++; cursorY = margin + 18; doc.setFontSize(14); doc.text(title, margin, cursorY); doc.setFontSize(12); cursorY += 18; }
+          if(cursorY + 14 > maxY){
+            doc.setFontSize(10);
+            doc.text(`Page ${pageNum}`, pageWidth - margin - 50, pageHeight - margin + 10);
+            doc.addPage(); pageNum++; cursorY = margin + 18;
+            doc.setFontSize(14); doc.text(title, margin, cursorY); doc.setFontSize(12); cursorY += 18;
+          }
           doc.text(lines[li], margin, cursorY);
           cursorY += 14;
         }
@@ -381,13 +383,70 @@ list.forEach(n => {
       status('Exported ZIP');
     });
 
-    // ----- ADDED: Export single current note as PDF -----
-    exportPdfBtn && exportPdfBtn.addEventListener('click', ()=>{
+    // Undo/Redo/Clear
+    undoBtn.addEventListener('click', ()=>{ notepad.focus(); document.execCommand('undo'); });
+    redoBtn.addEventListener('click', ()=>{ notepad.focus(); document.execCommand('redo'); });
+    clearNoteBtn.addEventListener('click', ()=>{ if(confirm('Clear note?')){ notepad.value=''; updateCount(); status('Cleared'); } });
+
+    // Font controls
+    fontFamily.addEventListener('change', ()=>{ notepad.style.fontFamily = fontFamily.value; });
+    fontSize.addEventListener('change', ()=>{ notepad.style.fontSize = fontSize.value + 'px'; });
+
+    // Find / Replace
+    findBtn.addEventListener('click', ()=>{ findReplacePanel.style.display='block'; findInput.focus(); findReplacePanel.setAttribute('aria-hidden','false'); });
+    replaceBtn.addEventListener('click', ()=>{ findReplacePanel.style.display='block'; replaceInput.focus(); findReplacePanel.setAttribute('aria-hidden','false'); });
+    closeFind.addEventListener('click', ()=>{ findReplacePanel.style.display='none'; findReplacePanel.setAttribute('aria-hidden','true'); });
+
+    function findNext(){
+      const q = findInput.value; if(!q) return;
+      const text = notepad.value;
+      lastFindIndex = text.indexOf(q, lastFindIndex+1);
+      if(lastFindIndex === -1){ lastFindIndex = -1; alert('No more matches'); return; }
+      notepad.focus(); notepad.setSelectionRange(lastFindIndex, lastFindIndex + q.length);
+    }
+    function replaceOne(){
+      if(lastFindIndex===-1) findNext();
+      if(lastFindIndex===-1) return;
+      const before = notepad.value.slice(0,lastFindIndex);
+      const after = notepad.value.slice(lastFindIndex + findInput.value.length);
+      notepad.value = before + replaceInput.value + after;
+      updateCount();
+      lastFindIndex = -1;
+    }
+    function replaceAll(){ if(!findInput.value) return; notepad.value = notepad.value.split(findInput.value).join(replaceInput.value); updateCount(); }
+    doFind.addEventListener('click', findNext); doReplace.addEventListener('click', replaceOne); doReplaceAll.addEventListener('click', replaceAll);
+
+    // Clipboard (graceful)
+    copyBtn.addEventListener('click', async ()=>{
+      try{ await navigator.clipboard.writeText(notepad.value.substring(notepad.selectionStart, notepad.selectionEnd)); status('Copied'); }
+      catch(e){ notepad.focus(); document.execCommand('copy'); }
+    });
+    cutBtn.addEventListener('click', async ()=>{
+      try{ const sel = notepad.value.substring(notepad.selectionStart, notepad.selectionEnd); await navigator.clipboard.writeText(sel); notepad.setRangeText('', notepad.selectionStart, notepad.selectionEnd, 'end'); updateCount(); status('Cut'); }
+      catch(e){ notepad.focus(); document.execCommand('cut'); }
+    });
+    pasteBtn.addEventListener('click', async ()=>{
+      try{ const txt = await navigator.clipboard.readText(); const pos = notepad.selectionStart; notepad.setRangeText(txt, pos, pos, 'end'); updateCount(); status('Pasted'); }
+      catch(e){ notepad.focus(); document.execCommand('paste'); }
+    });
+
+    // Print
+    printBtn.addEventListener('click', ()=>{ window.print(); });
+
+    // Dark mode toggle + save settings
+    darkToggle.addEventListener('click', ()=>{
+      document.body.classList.toggle('dark');
+      saveSettings();
+      darkToggle.textContent = document.body.classList.contains('dark') ? 'Light' : 'Dark';
+    });
+
+    // Export current note to multi-page PDF
+    exportPdfBtn.addEventListener('click', ()=>{
       try{
-        if(!jsPDF){ alert('PDF export library not loaded. Make sure you are online.'); return; }
+        if(!window.jspdf){ alert('PDF library not loaded'); return; }
         const title = (noteTitle.value || (currentId ? (notes.find(n=>n.id===currentId)||{}).title : 'Untitled')) || 'Untitled';
         const content = notepad.value || (currentId ? (notes.find(n=>n.id===currentId)||{}).content : '') || '';
-        const doc = new jsPDF({unit:'pt', format:'a4'});
+        const doc = new jspdf.jsPDF({unit:'pt', format:'a4'});
         const margin = 40;
         const pageWidth = doc.internal.pageSize.getWidth();
         const pageHeight = doc.internal.pageSize.getHeight();
@@ -400,76 +459,89 @@ list.forEach(n => {
         const maxY = pageHeight - margin - 20;
         let pageNum = 1;
         for(let i=0;i<lines.length;i++){
-          if(cursorY + 14 > maxY){ doc.setFontSize(10); doc.text(`Page ${pageNum}`, pageWidth - margin - 50, pageHeight - margin + 10); doc.addPage(); pageNum++; cursorY = margin + 18; doc.setFontSize(14); doc.text(title, margin, cursorY); doc.setFontSize(12); cursorY += 18; }
-          doc.text(lines[i], margin, cursorY);
-          cursorY += 14;
+          if(cursorY + 14 > maxY){
+            doc.setFontSize(10); doc.text(`Page ${pageNum}`, pageWidth - margin - 50, pageHeight - margin + 10);
+            doc.addPage(); pageNum++; cursorY = margin + 18; doc.setFontSize(14); doc.text(title, margin, cursorY); doc.setFontSize(12); cursorY += 18;
+          }
+          doc.text(lines[i], margin, cursorY); cursorY += 14;
         }
         doc.setFontSize(10); doc.text(`Page ${pageNum}`, pageWidth - margin - 50, pageHeight - margin + 10);
-        const filename = safeFileName(title) + '.pdf';
-        doc.save(filename);
-        status('PDF exported');
+        const filename = safeFileName(title) + '.pdf'; doc.save(filename); status('PDF exported');
       }catch(err){ console.error(err); alert('Export failed: ' + (err && err.message)); }
     });
-    // ---------------------------------------------------
 
-    // Undo / Redo / Clear
-    undoBtn.addEventListener('click', ()=>{ notepad.focus(); document.execCommand('undo'); });
-    redoBtn.addEventListener('click', ()=>{ notepad.focus(); document.execCommand('redo'); });
-    clearNoteBtn.addEventListener('click', ()=>{ if(confirm('Clear note?')){ notepad.value=''; updateCount(); status('Cleared'); } });
-
-    // Font controls
-    fontFamily.addEventListener('change', ()=>{ notepad.style.fontFamily = fontFamily.value; });
-    fontSize.addEventListener('change', ()=>{ notepad.style.fontSize = fontSize.value + 'px'; });
-
-    // Find / Replace
-    findBtn.addEventListener('click', ()=>{ findReplacePanel.style.display='block'; findInput.focus(); });
-    replaceBtn.addEventListener('click', ()=>{ findReplacePanel.style.display='block'; replaceInput.focus(); });
-    closeFind.addEventListener('click', ()=>{ findReplacePanel.style.display='none'; });
-
-    function findNext(){
-      const q = findInput.value; if(!q) return; const text = notepad.value; lastFindIndex = text.indexOf(q, lastFindIndex+1); if(lastFindIndex === -1){ lastFindIndex = -1; alert('No more matches'); return; }
-      notepad.focus(); notepad.setSelectionRange(lastFindIndex, lastFindIndex + q.length);
-    }
-    function replaceOne(){ if(lastFindIndex===-1) findNext(); if(lastFindIndex===-1) return; const before = notepad.value.slice(0,lastFindIndex); const after = notepad.value.slice(lastFindIndex + findInput.value.length); notepad.value = before + replaceInput.value + after; updateCount(); lastFindIndex = -1; }
-    function replaceAll(){ if(!findInput.value) return; notepad.value = notepad.value.split(findInput.value).join(replaceInput.value); updateCount(); }
-    doFind.addEventListener('click', findNext); doReplace.addEventListener('click', replaceOne); doReplaceAll.addEventListener('click', replaceAll);
-
-    // Clipboard actions (graceful)
-    copyBtn && copyBtn.addEventListener('click', async ()=>{ try{ await navigator.clipboard.writeText(notepad.value.substring(notepad.selectionStart, notepad.selectionEnd)); status('Copied'); }catch(e){ notepad.focus(); document.execCommand('copy'); } });
-    cutBtn && cutBtn.addEventListener('click', async ()=>{ try{ const sel = notepad.value.substring(notepad.selectionStart, notepad.selectionEnd); await navigator.clipboard.writeText(sel); notepad.setRangeText('', notepad.selectionStart, notepad.selectionEnd, 'end'); updateCount(); status('Cut'); }catch(e){ notepad.focus(); document.execCommand('cut'); } });
-    pasteBtn && pasteBtn.addEventListener('click', async ()=>{ try{ const txt = await navigator.clipboard.readText(); const pos = notepad.selectionStart; notepad.setRangeText(txt, pos, pos, 'end'); updateCount(); status('Pasted'); }catch(e){ notepad.focus(); document.execCommand('paste'); } });
-
-    // Print
-    printBtn.addEventListener('click', ()=>{ window.print(); });
-
-    // Dark mode
-    darkToggle.addEventListener('click', ()=>{ document.body.classList.toggle('dark'); darkToggle.textContent = document.body.classList.contains('dark') ? 'Light' : 'Dark'; });
-
-    // Copy / paste keyboard shortcuts
+    // Keyboard shortcuts
     document.addEventListener('keydown',(e)=>{
       if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); saveNoteHandler(); }
       if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='p'){ e.preventDefault(); window.print(); }
     });
 
-    // Helpers
-    function status(txt){ statusEl.textContent = txt; setTimeout(()=>{ statusEl.textContent = 'Ready'; },1400); }
-    function updateCount(){ charCount.textContent = `${notepad.value.length} characters`; }
+    // Save before unload
+    window.addEventListener('beforeunload', ()=>{ saveNoteHandler(); });
 
+    // Periodic save (if content exists)
+    setInterval(()=>{ if(notepad.value.trim() !== '') saveNoteHandler(); }, 30000);
+
+    // Settings persistence
+    function loadSettings(){
+      try{
+        const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+        if(s.fontSize) fontSize.value = s.fontSize;
+        if(s.fontFamily) fontFamily.value = s.fontFamily;
+        if(s.theme === 'dark') document.body.classList.add('dark');
+        applyFontSize();
+        applyFontFamily();
+      }catch(e){ console.warn('Could not load settings',e) }
+    }
+    function saveSettings(){
+      const settings = { fontSize: fontSize.value, fontFamily: fontFamily.value, theme: document.body.classList.contains('dark') ? 'dark' : 'light' };
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    }
+    function applyFontSize(){ notepad.style.fontSize = fontSize.value + 'px'; }
+    function applyFontFamily(){ notepad.style.fontFamily = fontFamily.value; }
+
+    fontSize.addEventListener('change', ()=>{ applyFontSize(); saveSettings(); });
+    fontFamily.addEventListener('change', ()=>{ applyFontFamily(); saveSettings(); });
+
+    // Search filter
     search.addEventListener('input', ()=> renderNotes(search.value));
 
-    // Init
-    toggleSidebar.addEventListener('click', ()=> sidebar.classList.toggle('hidden'));
+    // Sidebar toggle
+    toggleSidebar.addEventListener('click', ()=>{
+      sidebar.classList.toggle('hidden');
+      const hidden = sidebar.classList.contains('hidden');
+      sidebar.setAttribute('aria-hidden', hidden ? 'true' : 'false');
+    });
+
+    // Delete current note
+    deleteNote.addEventListener('click', ()=>{
+      if(!currentId){ noteTitle.value=''; notepad.value=''; return; }
+      if(confirm('Delete current note?')){
+        notes = notes.filter(n=>n.id!==currentId);
+        saveToLocal(); currentId=null; noteTitle.value=''; notepad.value=''; renderNotes(); status('Deleted');
+      }
+    });
+
+    // New / Save button events
     newNote.addEventListener('click', newNoteHandler);
     saveNote.addEventListener('click', saveNoteHandler);
-    deleteNote.addEventListener('click', ()=>{ if(currentId && confirm('Delete note?')){ notes = notes.filter(n=>n.id!==currentId); saveToLocal(); currentId=null; noteTitle.value=''; notepad.value=''; renderNotes(); status('Deleted'); } });
+
+    // Update char count
+    function updateCount(){ charCount.textContent = `${notepad.value.length} characters`; }
 
     notepad.addEventListener('input', ()=>{ updateCount(); });
 
-    // ensure font defaults applied
-    notepad.style.fontFamily = fontFamily.value;
-    notepad.style.fontSize = fontSize.value + 'px';
-
-    renderNotes();
+    // Init load notes + settings
+    function init(){
+      try{
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        notes = saved || [];
+      }catch(e){ notes = [] }
+      loadSettings();
+      renderNotes();
+      updateCount();
+    }
+    init();
   </script>
 </body>
 </html>
