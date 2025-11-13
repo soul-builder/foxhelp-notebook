@@ -1,12 +1,3 @@
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNDNJRX2D"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-CLNDNJRX2D');
-<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNDNJRX2D"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -53,6 +44,15 @@
     .status-row{margin-top:8px;display:flex;justify-content:space-between;font-size:12px;color:#666}
 
     .find-replace{position:fixed;right:18px;top:70px;background:#fff;border:1px solid #ddd;padding:10px;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.12);display:none}
+
+  /* Insert menu styles */
+  /* Use fixed positioning so the menu sits above the header/sidebar and is not clipped by container overflow */
+  .insert-menu{position:fixed;z-index:100000;background:#fff;border:1px solid #ddd;padding:10px;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,0.12);display:none;max-width:520px;max-height:360px;overflow:auto}
+  .insert-menu .section{margin-bottom:8px}
+  .insert-menu .section h4{margin:0 0 6px 0;font-size:13px;color:#333}
+  .insert-grid{display:flex;flex-wrap:wrap;gap:6px}
+  .insert-grid button{min-width:34px;min-height:30px;padding:4px 6px;font-size:16px;display:inline-flex;align-items:center;justify-content:center}
+  .insert-actions{display:flex;gap:6px;flex-wrap:wrap}
 
     body.dark .sidebar, body.dark .notepad, body.dark .note-item, body.dark .note-title { background: #0b1220; color: #e6eef8; border-color: rgba(255,255,255,0.06); }
     body.dark .note-item:hover { background: rgba(255,255,255,0.03); }
@@ -116,8 +116,12 @@
 }
 
   </style>
+  <!-- Load requested web fonts from Google Fonts (fall back to system fonts where necessary) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Roboto:wght@400;700&family=Lato:wght@400;700&family=Source+Sans+3:wght@400;700&family=Noto+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
   <!-- jsPDF and JSZip for PDF + ZIP export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- html2canvas is required by jsPDF.html; ensure it's available -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 </head>
 <body>
@@ -134,27 +138,81 @@
         <input type="file" id="openFile" accept=".txt,.md" class="input-file" style="display:none">
 
         <button class="btn small" id="saveNote">Save</button>
-        <button class="btn small" id="exportPdf">Export PDF</button>
+        <div style="position:relative;display:inline-block">
+          <button class="btn small" id="exportBtn">Export ▾</button>
+          <div id="exportMenu" style="position:absolute;right:0;top:36px;display:none;background:#fff;border:1px solid #ddd;padding:6px;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,0.12);z-index:100000">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <button class="btn small" id="exportPdfOption">Export PDF</button>
+              <button class="btn small" id="exportTxtOption">Export .txt</button>
+            </div>
+          </div>
+        </div>
         <button class="btn small" id="printBtn">Print</button>
         <button class="btn small" id="undoBtn">Undo</button>
         <button class="btn small" id="redoBtn">Redo</button>
-        <button class="btn small" id="clearNote">Clear</button>
+  <button class="btn small" id="clearNote">Clear</button>
+  <button class="btn small" id="insertBtn" title="Insert">Insert ▾</button>
 
         <select id="fontFamily" class="select">
+          <option value="Andale Mono, monospace">Andale Mono</option>
+          <option value="Arial, Helvetica, sans-serif">Arial</option>
+          <option value="'Arial Black', Gadget, sans-serif">Arial Black</option>
+          <option value="'Book Antiqua', Palatino, serif">Book Antiqua</option>
+          <option value="'Comic Sans MS', 'Comic Sans', cursive">Comic Sans MS</option>
+          <option value="'Courier New', Courier, monospace">Courier New</option>
+          <option value="Georgia, 'Times New Roman', Times, serif">Georgia</option>
+          <option value="Helvetica, Arial, sans-serif">Helvetica</option>
+          <option value="Impact, Charcoal, sans-serif">Impact</option>
+          <option value="Συμβολ, Symbol, sans-serif">Συμβολ</option>
+          <option value="Tahoma, Verdana, sans-serif">Tahoma</option>
+          <option value="Terminal, monospace">Terminal</option>
+          <option value="'Times New Roman', Times, serif">Times New Roman</option>
+          <option value="'Trebuchet MS', Helvetica, sans-serif">Trebuchet MS</option>
+          <option value="Verdana, Geneva, sans-serif">Verdana</option>
+          <option value="Webdings, sans-serif">Webdings</option>
+          <option value="Wingdings, sans-serif">Wingdings</option>
+          <option value="Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">Inter</option>
+          <option value="Roboto, 'Helvetica Neue', Arial, sans-serif">Roboto</option>
+          <option value="Lato, 'Helvetica Neue', Arial, sans-serif">Lato</option>
+          <option value="'Source Sans 3', sans-serif">Source Sans 3</option>
+          <option value="'Noto Sans', sans-serif">Noto Sans</option>
+          <option value="'Open Sans', sans-serif">Open Sans</option>
+          <option value="'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Courier New', monospace">JetBrains Mono</option>
+          <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI (system)</option>
+          <option value="Calibri, 'Segoe UI', Tahoma, sans-serif">Calibri (system)</option>
+          <option value="Cambria, Georgia, serif">Cambria (system)</option>
           <option value="ui-monospace, SFMono-Regular, Menlo, Monaco, 'Courier New', monospace">Monospace</option>
-          <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Sans</option>
-          <option value="Georgia, 'Times New Roman', Times, serif">Serif</option>
         </select>
 
         <select id="fontSize" class="select">
-          <option value="13">13px</option>
-          <option value="15" selected>15px</option>
-          <option value="17">17px</option>
-          <option value="19">19px</option>
+          <!-- Font sizes from 8pt to 42pt -->
+          <!-- default selected is 15pt to preserve previous feel -->
+          
+          <!-- generated list 8..42 -->
+          <option value="8">8pt</option>
+          <option value="9">9pt</option>
+          <option value="10">10pt</option>
+          <option value="11">11pt</option>
+          <option value="12">12pt</option>
+          <option value="13">13pt</option>
+          <option value="14">14pt</option>
+          <option value="15" selected>15pt</option>
+          <option value="16">16pt</option>
+          <option value="17">17pt</option>
+          <option value="18">18pt</option>
+          <option value="19">19pt</option>
+          <option value="20">20pt</option>
+          <option value="21">21pt</option>
+          <option value="22">22pt</option>
+          <option value="23">23pt</option>
+          <option value="24">24pt</option>
+          <option value="25">25pt</option>
+          <option value="26">26pt</option>
+          <option value="27">27pt</option>
+          <option value="28">28pt</option>
         </select>
 
-        <button class="btn small" id="findBtn">Find</button>
-        <button class="btn small" id="replaceBtn">Replace</button>
+  <button class="btn small" id="findReplaceBtn">Find / Replace</button>
 
         <button class="btn small" id="cutBtn">Cut</button>
         <button class="btn small" id="copyBtn">Copy</button>
@@ -170,10 +228,40 @@
       <div class="header-row">
         <div>📘 Saved Notes</div>
         <!-- Export-all button next to title (three-line area) -->
-        <div>
-          <button class="btn small" id="exportAllBtn">Export All (ZIP)</button>
+        <div style="position:relative;display:inline-block">
+          <button class="btn small" id="exportAllBtn">Export All ▾</button>
+          <div id="exportAllMenu" style="position:absolute;right:0;top:36px;display:none;background:#fff;border:1px solid #ddd;padding:6px;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,0.12);z-index:100000">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <button class="btn small" id="exportAllTxtOption">Export All as .txt</button>
+              <button class="btn small" id="exportAllPdfOption">Export All as .pdf</button>
+            </div>
+          </div>
         </div>
       </div>
+    <!-- Insert menu placed here so it can be positioned near the toolbar -->
+    <div id="insertMenu" class="insert-menu" role="menu" aria-hidden="true">
+      <div class="section">
+        <h4>Date / Time</h4>
+        <div class="insert-actions">
+          <button class="btn small" data-dt="hh:mm:ss">hh:mm:ss (24h)</button>
+          <button class="btn small" data-dt="dd/mm/yy">dd/mm/yy</button>
+          <button class="btn small" data-dt="hh:mm:ss ampm">hh:mm:ss AM/PM</button>
+          <button class="btn small" data-dt="yy/mm/dd">yy/mm/dd</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h4>Special characters</h4>
+        <div id="specialGrid" class="insert-grid" aria-label="Special characters"></div>
+      </div>
+
+      <div class="section">
+        <h4>Other</h4>
+        <div class="insert-actions">
+          <button class="btn small" id="nbspaceBtn">NonBreaking Space</button>
+        </div>
+      </div>
+    </div>
 
       <div style="padding:8px;display:flex;gap:6px">
         <input id="search" placeholder="Search..." style="flex:1;padding:6px;border-radius:6px;border:1px solid #ddd">
@@ -193,7 +281,10 @@
 
       <div class="status-row">
         <div><span id="status">Ready</span></div>
-        <div><span id="charCount">0 characters</span></div>
+        <div>
+          <span id="wordCount">0 words</span>
+          <span style="margin-left:10px" id="charCount">0 characters</span>
+        </div>
       </div>
     </main>
   </div>
@@ -225,21 +316,25 @@
     const newNote = document.getElementById('newNote');
     const saveNote = document.getElementById('saveNote');
     const deleteNote = document.getElementById('deleteNote');
-    const statusEl = document.getElementById('status');
-    const charCount = document.getElementById('charCount');
+  const statusEl = document.getElementById('status');
+  const wordCountEl = document.getElementById('wordCount');
+  const charCount = document.getElementById('charCount');
     const search = document.getElementById('search');
     const openFileBtn = document.getElementById('openFileBtn');
-    const openFile = document.getElementById('openFile');
-    const exportAllBtn = document.getElementById('exportAllBtn');
+  const openFile = document.getElementById('openFile');
+  const exportAllBtn = document.getElementById('exportAllBtn');
+  const exportBtn = document.getElementById('exportBtn');
+  const exportMenu = document.getElementById('exportMenu');
+  const exportPdfOption = document.getElementById('exportPdfOption');
+  const exportTxtOption = document.getElementById('exportTxtOption');
 
     const undoBtn = document.getElementById('undoBtn');
     const redoBtn = document.getElementById('redoBtn');
     const clearNoteBtn = document.getElementById('clearNote');
     const fontFamily = document.getElementById('fontFamily');
     const fontSize = document.getElementById('fontSize');
-    const findBtn = document.getElementById('findBtn');
-    const replaceBtn = document.getElementById('replaceBtn');
-    const findReplacePanel = document.getElementById('findReplacePanel');
+  const findReplaceBtn = document.getElementById('findReplaceBtn');
+  const findReplacePanel = document.getElementById('findReplacePanel');
     const findInput = document.getElementById('findInput');
     const replaceInput = document.getElementById('replaceInput');
     const doFind = document.getElementById('doFind');
@@ -252,7 +347,20 @@
     const pasteBtn = document.getElementById('pasteBtn');
     const printBtn = document.getElementById('printBtn');
     const darkToggle = document.getElementById('darkToggle');
-    const exportPdfBtn = document.getElementById('exportPdf');
+  // legacy exportPdf element removed; using exportBtn/exportMenu instead
+    const insertBtn = document.getElementById('insertBtn');
+    const insertMenu = document.getElementById('insertMenu');
+  const specialGrid = document.getElementById('specialGrid');
+
+    // Ensure the insert menu is appended to document.body so it won't be clipped
+    // by container stacking contexts (move it at runtime to avoid changing HTML structure).
+    if(insertMenu && insertMenu.parentNode !== document.body){
+      try{
+        document.body.appendChild(insertMenu);
+        insertMenu.style.position = 'fixed';
+        insertMenu.style.zIndex = '2147483647';
+      }catch(e){ /* ignore */ }
+    }
 
     // Data
     let notes = JSON.parse(localStorage.getItem('foxhelp_notes') || '[]');
@@ -279,7 +387,8 @@
         const m = document.createElement('div'); m.className='meta'; m.textContent = (n.content||'').slice(0,80);
         left.appendChild(t); left.appendChild(m);
         const right = document.createElement('div');
-        const openBtn = document.createElement('button'); openBtn.className='btn small'; openBtn.textContent='Open'; openBtn.addEventListener('click',(e)=>{ e.stopPropagation(); loadNote(n.id); sidebar.classList.add('hidden'); });
+  const openBtn = document.createElement('button'); openBtn.className='btn small'; openBtn.textContent='Open'; openBtn.addEventListener('click',(e)=>{ e.stopPropagation(); loadNote(n.id); hideSidebar(); });
+        
         const delBtn = document.createElement('button'); delBtn.className='btn small'; delBtn.textContent='Delete'; delBtn.addEventListener('click',(e)=>{ e.stopPropagation(); notes = notes.filter(x=>x.id!==n.id); saveToLocal(); renderNotes(search.value); });
         right.appendChild(openBtn); right.appendChild(delBtn);
         item.appendChild(left); item.appendChild(right);
@@ -300,79 +409,236 @@
     function loadNote(id){ const n = notes.find(x=>x.id===id); if(!n) return; currentId = n.id; noteTitle.value = n.title; notepad.value = n.content; status('Loaded'); updateCount(); }
 
     // Open file
-    openFileBtn.addEventListener('click', ()=> openFile.click());
-    openFile.addEventListener('change', async (e)=>{
-      const f = e.target.files[0]; if(!f) return; const txt = await f.text(); noteTitle.value = f.name.replace(/\.[^.]+$/, ''); notepad.value = txt; currentId = null; status('File opened'); updateCount(); openFile.value='';
-    });
+    // Wire up Open button -> hidden file input
+    if(openFileBtn && openFile){
+      openFileBtn.addEventListener('click', ()=> openFile.click());
+    }
+    if(openFile){
+      openFile.addEventListener('change', async (e)=>{
+        const f = e.target.files && e.target.files[0]; if(!f) return; const txt = await f.text(); noteTitle.value = f.name.replace(/\.[^.]+$/, ''); notepad.value = txt; currentId = null; status('File opened'); updateCount(); openFile.value = '';
+      });
+    }
 
-    // Export all as ZIP of PDFs
-    exportAllBtn.addEventListener('click', async ()=>{
-      if(!jsPDF || !JSZip){ alert('Libraries not loaded; please check your internet connection.'); return; }
-      if(notes.length === 0){ alert('No notes to export'); return; }
-      status('Preparing ZIP...');
-      const zip = new JSZip();
-      for(let i=0;i<notes.length;i++){
-        const n = notes[i];
-        const doc = new jsPDF({unit:'pt', format:'a4'});
-        const margin = 40;
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const pageHeight = doc.internal.pageSize.getHeight();
-        const usableWidth = pageWidth - margin*2;
-        const title = (n.title || 'Untitled').trim();
-        const content = n.content || '';
-        doc.setFontSize(18);
-        doc.text(title, margin, margin + 18);
-        doc.setFontSize(12);
-        const lines = doc.splitTextToSize(content, usableWidth);
-        let cursorY = margin + 36;
-        const maxY = pageHeight - margin - 20;
-        let pageNum = 1;
-        for(let li=0; li<lines.length; li++){
-          if(cursorY + 14 > maxY){ doc.setFontSize(10); doc.text(`Page ${pageNum}`, pageWidth - margin - 50, pageHeight - margin + 10); doc.addPage(); pageNum++; cursorY = margin + 18; doc.setFontSize(14); doc.text(title, margin, cursorY); doc.setFontSize(12); cursorY += 18; }
-          doc.text(lines[li], margin, cursorY);
-          cursorY += 14;
-        }
-        doc.setFontSize(10); doc.text(`Page ${pageNum}`, pageWidth - margin - 50, pageHeight - margin + 10);
-        const pdfBlob = doc.output('blob');
-        const filename = safeFileName(title) + '.pdf';
-        zip.file(filename, pdfBlob);
-      }
-      const zipBlob = await zip.generateAsync({type:'blob'});
-      const url = URL.createObjectURL(zipBlob);
-      const a = document.createElement('a'); a.href = url; a.download = `foxhelp_notes_${new Date().toISOString().slice(0,10)}.zip`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-      status('Exported ZIP');
-    });
+    // Export menu toggle and hide-on-outside-click
+    if(exportBtn && exportMenu){
+      exportBtn.addEventListener('click', (e)=>{ e.stopPropagation(); exportMenu.style.display = exportMenu.style.display==='block' ? 'none' : 'block'; });
+      document.addEventListener('click', (e)=>{ if(exportMenu.style.display==='block' && !exportMenu.contains(e.target) && !exportBtn.contains(e.target)){ exportMenu.style.display='none'; } });
+    }
 
-    // ----- ADDED: Export single current note as PDF -----
-    exportPdfBtn && exportPdfBtn.addEventListener('click', ()=>{
+    // Export PDF using a text-based (vector) approach for crisp, selectable text and correct pagination
+    function exportSinglePdf(){
+      try{ if(exportMenu) exportMenu.style.display = 'none'; }catch(e){}
       try{
         if(!jsPDF){ alert('PDF export library not loaded. Make sure you are online.'); return; }
+
         const title = (noteTitle.value || (currentId ? (notes.find(n=>n.id===currentId)||{}).title : 'Untitled')) || 'Untitled';
         const content = notepad.value || (currentId ? (notes.find(n=>n.id===currentId)||{}).content : '') || '';
+
         const doc = new jsPDF({unit:'pt', format:'a4'});
         const margin = 40;
+        const leftX = margin + 12; // safety offset to avoid clipping at left edge
         const pageWidth = doc.internal.pageSize.getWidth();
         const pageHeight = doc.internal.pageSize.getHeight();
-        const usableWidth = pageWidth - margin*2;
-        doc.setFontSize(18);
-        doc.text(title, margin, margin + 18);
-        doc.setFontSize(12);
-        const lines = doc.splitTextToSize(content, usableWidth);
-        let cursorY = margin + 36;
+        const usableWidth = pageWidth - margin*2 - 12; // match leftX
+
+        const fam = (fontFamily.value || '').toLowerCase();
+        let jsFont = 'helvetica';
+        if(fam.includes('courier') || fam.includes('mono')) jsFont = 'courier';
+        else if(fam.includes('times') || fam.includes('serif')) jsFont = 'times';
+
+        // Body font size (consistent across pages)
+        const bodyFontPt = parseInt(fontSize.value || '12', 10) || 12;
+        const titleFontPt = bodyFontPt + 4; // title 4 pts larger
+        const lineHeight = Math.round(bodyFontPt * 1.25);
+
+  // First-page top-left watermark (10pt, 50% opacity)
+  try{ if(typeof doc.setGState === 'function') doc.setGState({opacity:0.5}); }catch(e){}
+  doc.setFontSize(10); doc.setFont(jsFont, 'normal');
+  doc.text('Foxhelp Notebook', leftX, margin - 8);
+  try{ if(typeof doc.setGState === 'function') doc.setGState({opacity:1}); }catch(e){}
+
+  // Title on first page only, bold
+  doc.setFont(jsFont, 'bold');
+  doc.setFontSize(titleFontPt);
+  const titleY = margin + 18;
+  doc.text(title, leftX, titleY);
+  // reset to normal for body
+  doc.setFont(jsFont, 'normal');
+  doc.setFontSize(bodyFontPt);
+
+  // Start body text 24pt below the title
+  const lines = doc.splitTextToSize((content || '').replace(/\t/g, '    '), usableWidth);
+  let cursorY = titleY + 24;
         const maxY = pageHeight - margin - 20;
         let pageNum = 1;
+
         for(let i=0;i<lines.length;i++){
-          if(cursorY + 14 > maxY){ doc.setFontSize(10); doc.text(`Page ${pageNum}`, pageWidth - margin - 50, pageHeight - margin + 10); doc.addPage(); pageNum++; cursorY = margin + 18; doc.setFontSize(14); doc.text(title, margin, cursorY); doc.setFontSize(12); cursorY += 18; }
-          doc.text(lines[i], margin, cursorY);
-          cursorY += 14;
+          if(cursorY + lineHeight > maxY){
+            // page number on current page
+            doc.setFontSize(10); doc.setFont(jsFont, 'normal'); doc.text(`Page ${pageNum}`, pageWidth - margin - 50, pageHeight - margin + 10);
+            doc.addPage(); pageNum++;
+            // position cursor near top margin on new pages (no title)
+            cursorY = margin + 18;
+            doc.setFontSize(bodyFontPt);
+          }
+          doc.text(lines[i], leftX, cursorY);
+          cursorY += lineHeight;
         }
-        doc.setFontSize(10); doc.text(`Page ${pageNum}`, pageWidth - margin - 50, pageHeight - margin + 10);
+
+        // final page footer: page number
+        doc.setFontSize(10); doc.setFont(jsFont, 'normal'); doc.text(`Page ${pageNum}`, pageWidth - margin - 50, pageHeight - margin + 10);
+
+        // final page watermark-style counts (8pt, low opacity) centered
+        const words = (content||'').trim().length ? (content||'').trim().split(/\s+/).filter(Boolean).length : 0;
+        const chars = (content||'').length;
+        const countsText = `${words} words — ${chars} characters`;
+        try{ if(typeof doc.setGState === 'function') doc.setGState({opacity:0.28}); }catch(e){}
+        doc.setFontSize(8); doc.setTextColor(0,0,0);
+        doc.text(countsText, pageWidth/2, pageHeight - margin + 6, {align: 'center'});
+        try{ if(typeof doc.setGState === 'function') doc.setGState({opacity:1}); }catch(e){}
+
         const filename = safeFileName(title) + '.pdf';
         doc.save(filename);
         status('PDF exported');
       }catch(err){ console.error(err); alert('Export failed: ' + (err && err.message)); }
+    }
+
+    // Attach to both menu option and any legacy button ids
+    if(exportPdfOption) exportPdfOption.addEventListener('click', exportSinglePdf);
+    const exportPdfBtn = document.getElementById('exportPdfBtn') || document.getElementById('exportPdf');
+    if(exportPdfBtn) exportPdfBtn.addEventListener('click', exportSinglePdf);
+
+    // Export as plain text (.txt)
+    exportTxtOption && exportTxtOption.addEventListener('click', ()=>{
+      exportMenu.style.display = 'none';
+      const filename = safeFileName(noteTitle.value || 'note') + '.txt';
+      const blob = new Blob([notepad.value || ''], {type:'text/plain;charset=utf-8'});
+      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      status('TXT exported');
     });
-    // ---------------------------------------------------
+
+    // Export All menu (offers .txt or .pdf) and handlers
+    const exportAllMenu = document.getElementById('exportAllMenu');
+    const exportAllTxtOption = document.getElementById('exportAllTxtOption');
+    const exportAllPdfOption = document.getElementById('exportAllPdfOption');
+
+    // Toggle menu and hide-on-outside-click
+    if(exportAllBtn && exportAllMenu){
+      exportAllBtn.addEventListener('click', (e)=>{ e.stopPropagation(); exportAllMenu.style.display = exportAllMenu.style.display==='block' ? 'none' : 'block'; });
+      document.addEventListener('click', (e)=>{ if(exportAllMenu.style.display==='block' && !exportAllMenu.contains(e.target) && !exportAllBtn.contains(e.target)){ exportAllMenu.style.display='none'; } });
+    }
+
+    // Helper to create a PDF blob for a note (text-based, paginated)
+    function createPdfBlobFor(title, content){
+      const doc = new jsPDF({unit:'pt', format:'a4'});
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const margin = 40;
+  const leftX = margin + 12; // increased safety offset to avoid clipping at exact margin
+  const usableW = pageW - margin*2 - 12;
+
+    const fam = (fontFamily.value || '').toLowerCase();
+    let jsFont = 'helvetica';
+    if(fam.includes('courier') || fam.includes('mono')) jsFont = 'courier';
+    else if(fam.includes('times') || fam.includes('serif')) jsFont = 'times';
+
+    // Body font size (consistent across pages) and title 4pt larger
+    const bodyFontPt = parseInt(fontSize.value || '12', 10) || 12;
+    const titleFontPt = bodyFontPt + 4;
+    const lineHeight = Math.round(bodyFontPt * 1.25);
+
+    // First-page top-left watermark (10pt, 50% opacity)
+    const drawWatermark = ()=>{
+      try{ if(typeof doc.setGState === 'function') doc.setGState({opacity:0.5}); }catch(e){}
+      doc.setFontSize(10); doc.setFont(jsFont, 'normal'); doc.setTextColor(0,0,0);
+      doc.text('Foxhelp Notebook', leftX, margin - 8);
+      try{ if(typeof doc.setGState === 'function') doc.setGState({opacity:1}); }catch(e){}
+    };
+    drawWatermark();
+
+    // Title on first page only, bold
+    doc.setFont(jsFont, 'bold');
+    doc.setFontSize(titleFontPt);
+    const titleY = margin + 18;
+    doc.text(title || 'Untitled', leftX, titleY);
+    // reset to normal for body
+    doc.setFont(jsFont, 'normal');
+    doc.setFontSize(bodyFontPt);
+
+      const paragraphs = (content || '').split('\n');
+      // start body text 24pt below the title
+      let cursorY = titleY + 24;
+      const countsText = (()=>{ const chars = (content||'').length; const words = (content||'').trim().length ? (content||'').trim().split(/\s+/).filter(Boolean).length : 0; return `${words} words — ${chars} characters`; })();
+
+      for(let pi=0; pi<paragraphs.length; pi++){
+        let para = paragraphs[pi] || '';
+        para = para.replace(/\t/g, '    ');
+        const lines = doc.splitTextToSize(para, usableW);
+        for(let li=0; li<lines.length; li++){
+          if(cursorY + lineHeight > pageH - margin - 12){ doc.addPage(); cursorY = margin + 18; }
+          doc.setFontSize(bodyFontPt);
+          doc.text(lines[li], leftX, cursorY);
+          cursorY += lineHeight;
+        }
+        cursorY += lineHeight;
+      }
+  // final page watermark-style counts (8pt, low opacity) centered
+  try{ if(typeof doc.setGState === 'function') doc.setGState({opacity:0.28}); }catch(e){}
+  doc.setFontSize(8); doc.setTextColor(0,0,0);
+  doc.text(countsText, pageW/2, pageH - margin + 6, {align:'center'});
+  try{ if(typeof doc.setGState === 'function') doc.setGState({opacity:1}); }catch(e){}
+
+      // return a Blob representing the PDF
+  try{ return doc.output('blob'); }catch(e){ console.error('PDF output failed', e); return null; }
+    }
+
+    // Export All as .txt ZIP
+    exportAllTxtOption && exportAllTxtOption.addEventListener('click', async ()=>{
+      try{
+        exportAllMenu.style.display = 'none';
+        if(!JSZip){ alert('ZIP library not loaded. Make sure you are online.'); return; }
+        if(!notes || notes.length === 0){ alert('No notes to export.'); return; }
+
+        const zip = new JSZip();
+        notes.forEach(n => {
+          const fname = safeFileName(n.title || ('note-' + (n.id || Math.random().toString(36).slice(2,6)))) + '.txt';
+          zip.file(fname, n.content || '');
+        });
+        const manifest = notes.map(n => ({ id: n.id, title: n.title, updated: n.updated }));
+        zip.file('manifest.json', JSON.stringify(manifest, null, 2));
+
+        const blob = await zip.generateAsync({ type: 'blob' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'foxhelp_notes_txt.zip'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+        status('All notes exported (ZIP .txt)');
+      }catch(err){ console.error('Export All TXT failed', err); alert('Export All (TXT) failed: ' + (err && err.message)); }
+    });
+
+    // Export All as .pdf ZIP (one PDF per note)
+    exportAllPdfOption && exportAllPdfOption.addEventListener('click', async ()=>{
+      try{
+        exportAllMenu.style.display = 'none';
+        if(!JSZip){ alert('ZIP library not loaded. Make sure you are online.'); return; }
+        if(!jsPDF){ alert('PDF library not loaded. Make sure you are online.'); return; }
+        if(!notes || notes.length === 0){ alert('No notes to export.'); return; }
+
+        const zip = new JSZip();
+        for(const n of notes){
+          const title = n.title || 'Untitled';
+          const content = n.content || '';
+          const pdfBlob = createPdfBlobFor(title, content);
+          const fname = safeFileName(title || ('note-' + (n.id || Math.random().toString(36).slice(2,6)))) + '.pdf';
+          if(pdfBlob) zip.file(fname, pdfBlob);
+        }
+        const manifest = notes.map(n => ({ id: n.id, title: n.title, updated: n.updated }));
+        zip.file('manifest.json', JSON.stringify(manifest, null, 2));
+
+        const blob = await zip.generateAsync({ type: 'blob' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'foxhelp_notes_pdf.zip'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+        status('All notes exported (ZIP .pdf)');
+      }catch(err){ console.error('Export All PDF failed', err); alert('Export All (PDF) failed: ' + (err && err.message)); }
+    });
 
     // Undo / Redo / Clear
     undoBtn.addEventListener('click', ()=>{ notepad.focus(); document.execCommand('undo'); });
@@ -380,12 +646,13 @@
     clearNoteBtn.addEventListener('click', ()=>{ if(confirm('Clear note?')){ notepad.value=''; updateCount(); status('Cleared'); } });
 
     // Font controls
-    fontFamily.addEventListener('change', ()=>{ notepad.style.fontFamily = fontFamily.value; });
-    fontSize.addEventListener('change', ()=>{ notepad.style.fontSize = fontSize.value + 'px'; });
+  fontFamily.addEventListener('change', ()=>{ notepad.style.fontFamily = fontFamily.value; });
+  // Use points (pt) for font size per request
+  fontSize.addEventListener('change', ()=>{ notepad.style.fontSize = fontSize.value + 'pt'; });
 
     // Find / Replace
-    findBtn.addEventListener('click', ()=>{ findReplacePanel.style.display='block'; findInput.focus(); });
-    replaceBtn.addEventListener('click', ()=>{ findReplacePanel.style.display='block'; replaceInput.focus(); });
+  // Single Find/Replace button opens the panel and focuses the find input
+  findReplaceBtn && findReplaceBtn.addEventListener('click', ()=>{ findReplacePanel.style.display='block'; findInput.focus(); });
     closeFind.addEventListener('click', ()=>{ findReplacePanel.style.display='none'; });
 
     function findNext(){
@@ -401,8 +668,21 @@
     cutBtn && cutBtn.addEventListener('click', async ()=>{ try{ const sel = notepad.value.substring(notepad.selectionStart, notepad.selectionEnd); await navigator.clipboard.writeText(sel); notepad.setRangeText('', notepad.selectionStart, notepad.selectionEnd, 'end'); updateCount(); status('Cut'); }catch(e){ notepad.focus(); document.execCommand('cut'); } });
     pasteBtn && pasteBtn.addEventListener('click', async ()=>{ try{ const txt = await navigator.clipboard.readText(); const pos = notepad.selectionStart; notepad.setRangeText(txt, pos, pos, 'end'); updateCount(); status('Pasted'); }catch(e){ notepad.focus(); document.execCommand('paste'); } });
 
-    // Print
-    printBtn.addEventListener('click', ()=>{ window.print(); });
+    // Print: open a focused print window containing only the note (with watermark and counts)
+    printBtn.addEventListener('click', ()=>{
+      const title = (noteTitle.value || (currentId ? (notes.find(n=>n.id===currentId)||{}).title : 'Untitled')) || 'Untitled';
+      const content = notepad.value || '';
+      const fontFam = fontFamily.value || 'serif';
+      const fontSz = (fontSize.value || '15') + 'pt';
+      const words = content.trim().length ? content.trim().split(/\s+/).filter(Boolean).length : 0;
+      const chars = content.length;
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>Print - ${escapeHtml(title)}</title><style>body{font-family:${fontFam};font-size:${fontSz};padding:20px;color:#000} .fox-watermark{opacity:0.12;text-align:center;font-size:28px;margin-bottom:12px} pre{white-space:pre-wrap;line-height:1.35}</style></head><body><div class="fox-watermark">FoxHelp Notebook</div><h1 style="margin:6px 0 12px 0;font-size:20pt">${escapeHtml(title)}</h1><pre>${escapeHtml(content)}</pre><div style="margin-top:16px;font-size:11pt">${words} words — ${chars} characters</div></body></html>`;
+      const w = window.open('', '_blank');
+      if(!w){ alert('Popup blocked. Allow popups for this site to print.'); return; }
+      w.document.open(); w.document.write(html); w.document.close();
+      w.focus();
+      setTimeout(()=>{ w.print(); w.close(); }, 300);
+    });
 
     // Dark mode
     darkToggle.addEventListener('click', ()=>{ document.body.classList.toggle('dark'); darkToggle.textContent = document.body.classList.contains('dark') ? 'Light' : 'Dark'; });
@@ -411,32 +691,153 @@
     document.addEventListener('keydown',(e)=>{
       if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); saveNoteHandler(); }
       if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='p'){ e.preventDefault(); window.print(); }
+      // Ctrl+F / Cmd+F opens the Find/Replace panel in-app
+      if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='f'){
+        // avoid stealing browser find when user also wants that — preventDefault to keep focus in app
+        e.preventDefault();
+        if(findReplacePanel){ findReplacePanel.style.display='block'; findInput.focus(); }
+      }
     });
 
     // Helpers
+    function escapeHtml(str){
+      if(!str) return '';
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
     function status(txt){ statusEl.textContent = txt; setTimeout(()=>{ statusEl.textContent = 'Ready'; },1400); }
-    function updateCount(){ charCount.textContent = `${notepad.value.length} characters`; }
+    function updateCount(){
+      const text = notepad.value || '';
+      // character count (including spaces)
+      charCount.textContent = `${text.length} characters`;
+      // word count: split on whitespace, filter out empty tokens
+      const words = text.trim().length ? text.trim().split(/\s+/).filter(Boolean) : [];
+      wordCountEl.textContent = `${words.length} word${words.length===1? '':'s'}`;
+    }
+
+    // Sidebar helpers: support different show/hide classes across breakpoints
+    function showSidebar(){
+      if(window.matchMedia('(max-width:600px)').matches){
+        sidebar.classList.add('visible');
+      }else{
+        sidebar.classList.remove('hidden');
+      }
+    }
+    function hideSidebar(){
+      if(window.matchMedia('(max-width:600px)').matches){
+        sidebar.classList.remove('visible');
+      }else{
+        sidebar.classList.add('hidden');
+      }
+    }
+
+    // Insert helpers
+    function insertAtCaret(el, text){
+      try{
+        const start = el.selectionStart || 0;
+        const end = el.selectionEnd || 0;
+        el.setRangeText(text, start, end, 'end');
+        el.focus();
+        updateCount();
+        status('Inserted');
+      }catch(e){ console.error(e); }
+    }
+
+    // Date/time formats
+    function pad(n){ return (n<10? '0'+n : ''+n); }
+    function formatDateTime(kind){ const d = new Date(); if(kind==='hh:mm:ss'){ return pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds()); } if(kind==='dd/mm/yy'){ return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+String(d.getFullYear()).slice(-2); } if(kind==='hh:mm:ss ampm'){ const h = d.getHours(); const am = h<12?'AM':'PM'; const hh = h%12||12; return pad(hh)+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())+' '+am; } if(kind==='yy/mm/dd'){ return String(d.getFullYear()).slice(-2)+'/'+pad(d.getMonth()+1)+'/'+pad(d.getDate()); } return d.toString(); }
+
+    // Build special characters grid (from user-supplied list)
+    const specialCharsStr = `⬅️ ⬆️ ➡️ ⬇️ ↩️ ↪️ ⤴️ ⤵️ ⮕ ⮔ ⮞ ⮟ ⮘ ⮙ ⮚ ⮛ ⇢ ⇠ ⇨ ⇦ ⇧ ⇩ ⤳ ⤷ ✚ ➕ ✖ ✎ ✏️ 🗑️ 💾 🔍 🔎 🔗 📎 📁 📂 🗂️ 📝 🗒️ 🗃️ 🔄 🔁 🔂 ⚙️ 🔔 🔕 ⏰ ⏱️ ⏳ 🔒 🔓 🖊️ 🖋️ ✉️ 📤 📥 ✦ ✧ ★ ☆ ✪ ✫ ✬ ✭ ✮ ✯ ❇ ❈ ❉ ❊ ❋ ✤ ✱ ✲ ✳ ✴ ✵ ✶ ✷ ✸ ✹ ✺ ☀ ☁ ☂ ☃ ❄ ❆ ☾ ☽ ⚡ ⛅ 🌙 ∝ ∠ ∟ ⊥ ∧ ∨ ∩ ∪ ∫ ∬ ∭ ∮ ∯ ∰ ∂ ∇ ∴ ∵ ≈ ≡ ≢ ≤ ≥ ≪ ≫ ∞ ⊕ ⊖ ⊗ ⊘ ⊙ ⊚ ⊛ ⊤ ⊥ ⊢ ⊣ ∀ ∃ ∄ ∈ ∉ ∋ ∌ ∅ ℵ ¼ ½ ¾ ⅓ ⅔ ⅛ ⅜ ⅝ ⅞ ¹ ² ³ ⁴ ⁵ ⁶ ⁷ ⁸ ⁹ ⁰ ₁ ₂ ₃ ₄ ₅ ₆ ₇ ₈ ₉ ₀ ▪ ▫ ◾ ◽ ◼ ◻ ⬛ ⬜ ⬤ ⭕ ◯ ⚫ ⚪ ◈ ◉ ┌ ┐ └ ┘ ─ │ ┼ ┤ ├ ┴ ┬ ╔ ╗ ╚ ╝ ═ ║ ╩ ╦ ╠ ╣ ╬ ✓ ✔ ✕ ✖ ✗ ✘ ☑ ☐ ☒ ♻ ⚠ ❗ ❕ ❓ ❔ 🚫 ⛔ ⛏ ⚒ ⚙ ⚜ ⚖ ⚗ ⚰ ⚱ ⚓ ⚑ ⚐ ⚔ 🕊️ ☮ 🙂 😊 😎 🤔 😇 😍 🤩 😢 😡 😂 🤯 🙏 💡 💬 💭 📌 📍 ✉️ 📞 ¢ £ € ¥ © ® ™ ‰ µ ¶ § † ‡ « » … • ± × ÷ = ≠ ≤ ≥ ∞ ≈ √ ∑ ∏ ∂ ∆ ∫ ∴ ∵ Á À Â Ã Ä Å Æ Ç É È Ê Ë Í Ì Î Ï Ñ Ó Ò Ô Õ Ö Ø Ú Ù Û Ü Ý Ÿ Þ Ð á à â ã ä å æ ç é è ê ë í ì î ï ñ ó ò ô õ ö ø ú ù û ü ý ÿ ð þ ß Α Β Γ Δ Ε Ζ Η Θ Ι Κ Λ Μ Ν Ξ Ο Π Ρ Σ Τ Υ Φ Χ Ψ Ω α β γ δ ε ζ η θ ι κ λ μ ν ξ ο π ρ σ τ υ φ χ ψ ω ← ↑ → ↓ ↔ ↕ ⇐ ⇒ ⇔ ⊕ ⊗ ⊂ ⊃ ⊆ ⊇ ∈ ∉ ∩ ∪ ♠ ♣ ♥ ♦ ◊ ○ • ◘ ◙ ▪ ▫ □ ■ ⌂`;
+    const specialChars = specialCharsStr.split(/\s+/).filter(Boolean);
+    specialChars.forEach(ch=>{
+      const b = document.createElement('button'); b.className='btn small'; b.type='button'; b.textContent = ch; b.title = ch; b.addEventListener('click', ()=>{ insertAtCaret(notepad, ch); insertMenu.style.display='none'; insertMenu.setAttribute('aria-hidden','true'); }); specialGrid.appendChild(b);
+    });
+
+    // Insert menu interactions
+    insertBtn && insertBtn.addEventListener('click',(e)=>{
+      const rect = insertBtn.getBoundingClientRect();
+      const willShow = insertMenu.style.display!=='block';
+      insertMenu.style.display = willShow ? 'block' : 'none';
+      insertMenu.setAttribute('aria-hidden', !willShow);
+      if(willShow){
+        // position below the button using viewport coordinates (fixed positioning)
+        const top = rect.bottom + 6; // rect is viewport-based
+        let left = rect.left - 10;
+        // clamp to viewport so menu doesn't go off-screen
+        const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+        const menuW = Math.min(520, vw - 16);
+        if(left + menuW > vw - 8) left = vw - menuW - 8;
+        if(left < 8) left = 8;
+        insertMenu.style.top = top + 'px';
+        insertMenu.style.left = left + 'px';
+      }
+    });
+
+    // Date/time buttons
+    insertMenu && insertMenu.querySelectorAll('[data-dt]').forEach(btn=> btn.addEventListener('click', ()=>{ const k = btn.getAttribute('data-dt'); insertAtCaret(notepad, formatDateTime(k)); insertMenu.style.display='none'; insertMenu.setAttribute('aria-hidden','true'); }));
+
+    // Non-breaking space
+    const nbspaceBtn = document.getElementById('nbspaceBtn'); nbspaceBtn && nbspaceBtn.addEventListener('click', ()=>{ insertAtCaret(notepad, '\u00A0'); insertMenu.style.display='none'; insertMenu.setAttribute('aria-hidden','true'); });
+
+    // Close insert menu when clicking outside
+    document.addEventListener('click',(e)=>{ if(!insertMenu || !insertBtn) return; if(insertMenu.style.display==='block' && !insertMenu.contains(e.target) && !insertBtn.contains(e.target)){ insertMenu.style.display='none'; insertMenu.setAttribute('aria-hidden','true'); } });
 
     search.addEventListener('input', ()=> renderNotes(search.value));
 
     // Init
-    toggleSidebar.addEventListener('click', ()=> sidebar.classList.toggle('hidden'));
+    toggleSidebar.addEventListener('click', ()=>{
+      if(window.matchMedia('(max-width:600px)').matches){
+        sidebar.classList.toggle('visible');
+      }else{
+        sidebar.classList.toggle('hidden');
+      }
+    });
     newNote.addEventListener('click', newNoteHandler);
     saveNote.addEventListener('click', saveNoteHandler);
-    deleteNote.addEventListener('click', ()=>{ if(currentId && confirm('Delete note?')){ notes = notes.filter(n=>n.id!==currentId); saveToLocal(); currentId=null; noteTitle.value=''; notepad.value=''; renderNotes(); status('Deleted'); } });
+    // Improved delete handler: support deleting by currentId, fallback to find-by-title, or clear unsaved note
+    deleteNote.addEventListener('click', ()=>{
+      // If a saved note is selected, delete it
+      if(currentId){
+        if(confirm('Delete note?')){
+          notes = notes.filter(n=>n.id!==currentId);
+          saveToLocal();
+          currentId = null; noteTitle.value = ''; notepad.value = ''; renderNotes(); status('Deleted');
+        }
+        return;
+      }
+
+      // No currentId: try to match by title in saved notes
+      const title = (noteTitle.value || '').trim();
+      if(title){
+        const idx = notes.findIndex(n => (n.title || '') === title);
+        if(idx !== -1){
+          if(confirm(`Delete saved note "${title}"?`)){
+            notes.splice(idx, 1);
+            saveToLocal();
+            currentId = null; noteTitle.value = ''; notepad.value = ''; renderNotes(); status('Deleted');
+          }
+          return;
+        }
+      }
+
+      // Nothing matched: offer to clear the current (unsaved) note
+      if((noteTitle.value && noteTitle.value.trim()) || notepad.value){
+        if(confirm('No saved note selected. Clear current unsaved note?')){
+          noteTitle.value = ''; notepad.value = ''; updateCount(); status('Cleared');
+        }
+      }
+    });
 
     notepad.addEventListener('input', ()=>{ updateCount(); });
 
-    // ensure font defaults applied
-    notepad.style.fontFamily = fontFamily.value;
-    notepad.style.fontSize = fontSize.value + 'px';
+  // ensure font defaults applied
+  notepad.style.fontFamily = fontFamily.value;
+  notepad.style.fontSize = fontSize.value + 'pt';
 
     renderNotes();
   </script>
 </body>
 </html>
-
-
 
 
 
